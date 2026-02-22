@@ -104,51 +104,45 @@ docker compose exec web npm run test:coverage
 
 This project was built iteratively with an emphasis on keeping the UI and data layer maintainable as features expanded.
 
-- **Backend foundations**
-  - Core models:
-    - `users.User`: Custom Django auth user (`AbstractBaseUser` + `PermissionsMixin`) using **email as the username** (`USERNAME_FIELD = "email"`). Used as `AUTH_USER_MODEL` across the API.
-    - `notes.Category`: Category owned by a user (`Category.user -> AUTH_USER_MODEL`) with a `name` and a hex `color`. Category names are enforced as **unique per user**.
-    - `notes.Note`: Note owned by a user (`Note.user -> AUTH_USER_MODEL`) with `title`, `content`, optional `category`, and timestamps (`created_at`, `updated_at`).
-  - Default categories are created via a Django signal:
-    - A `post_save` receiver on `users.User` creates the initial categories (e.g. Random Thoughts, School, Personal) when a user is first created.
-    - The signal is registered in `users.apps.UsersConfig.ready()` (importing `users.signals`).
-    - This was implemented as a signal to keep the behavior centralized and automatic across all user creation paths (API signup, Django admin, tests, management commands), without coupling category initialization to any single view or serializer.
-  - API endpoints are protected by CSRF validation.
-    - Because the API uses cookie-based session authentication, CSRF protection is needed to prevent a malicious third-party site from triggering state-changing requests (create/update/delete) with a user’s existing session.
-    - Cookie-based session authentication was chosen to keep the auth flow simple for a same-origin web app (no JWT storage/refresh flow on the client) and to rely on Django’s built-in, well-tested session and permission machinery.
+### **Backend foundations**
 
-- **Frontend foundations**
-  - Home UI was built using Base Web components consolidating shared UI helpers.
-  - Autosave was designed to be reliable without spamming the API:
-    - Draft state lives in `useNoteDraft` and tracks a `dirty` flag (only user edits mark the draft dirty).
-    - Changes to title/content/category schedule a debounced save (currently ~900ms after the last edit).
-    - Only one save runs at a time (a ref-based guard prevents concurrent updates).
-    - On close, the editor flushes any pending changes before dismissing and then refreshes the notes list.
-    - This approach reduces request volume, avoids saving immediately on open, and makes the editor feel responsive while still minimizing data loss.
-  - The “New Note” flow creates a note immediately with a default title/content, then edits it in place.
-  - Data and editor state were extracted into hooks (`useNotes`, `useNoteDraft`) to reduce coupling in `page.tsx`.
-  - UI utilities were centralized in `web/src/lib/ui.ts`.
-  - API requests use a consistent fetch wrapper with CSRF token handling:
-    - The frontend fetches `/api/auth/csrf/` to set the CSRF cookie and includes credentials (session cookie).
-    - Mutating requests (e.g. login/logout/create/update) include the CSRF token in the `X-CSRFToken` header.
+#### Core models:
+- `users.User`: Custom Django auth user (`AbstractBaseUser` + `PermissionsMixin`) using **email as the username** (`USERNAME_FIELD = "email"`). Used as `AUTH_USER_MODEL` across the API.
+- `notes.Category`: Category owned by a user (`Category.user -> AUTH_USER_MODEL`) with a `name` and a hex `color`. Category names are enforced as **unique per user**.
+- `notes.Note`: Note owned by a user (`Note.user -> AUTH_USER_MODEL`) with `title`, `content`, optional `category`, and timestamps (`created_at`, `updated_at`).
+  
+#### Default categories are created via a Django signal:
+- A `post_save` receiver on `users.User` creates the initial categories (e.g. Random Thoughts, School, Personal) when a user is first created.
+- The signal is registered in `users.apps.UsersConfig.ready()` (importing `users.signals`).
+- This was implemented as a signal to keep the behavior centralized and automatic across all user creation paths (API signup, Django admin, tests, management commands), without coupling category initialization to any single view or serializer.
+  
+#### API endpoints are protected by CSRF validation.
+- Because the API uses cookie-based session authentication, CSRF protection is needed to prevent a malicious third-party site from triggering state-changing requests (create/update/delete) with a user’s existing session.
+- Cookie-based session authentication was chosen to keep the auth flow simple for a same-origin web app (no JWT storage/refresh flow on the client) and to rely on Django’s built-in, well-tested session and permission machinery.
 
-- **Docker/dev ergonomics**
-  - Added idempotent startup logic to create a default superuser and run migrations.
+### **Frontend foundations**
+Home UI was built using Base Web components consolidating shared UI helpers.
 
-- **AI assistance**
-  - Cascade was used to help with:
-    - Project initial structure setup:
-      - Docker configuration files
-      - Directory structure
-    - Architecture design and planning:
-      - Exploring design options pros and cons
-      - Brainstorming solutions
-    - Documentation and testing:
-      - Improving documentation clarity
-      - Checking test coverage and writing missing tests
-    - Debugging and troubleshooting:
-      - Analyzing errors and identifying root causes
-      - Suggesting fixes and improvements
-    - Code review and optimization:
-      - Reviewing code for best practices
-      - Suggesting improvements for code quality and performance
+#### Autosave was designed to be reliable without spamming the API:
+- The “New Note” flow creates a note immediately with a default title/content, then edits it in place.
+- Draft state lives in `useNoteDraft` and tracks a `dirty` flag (only user edits mark the draft dirty).
+- Changes to title/content/category schedule a debounced save (currently ~900ms after the last edit).
+- Only one save runs at a time (a ref-based guard prevents concurrent updates).
+- On close, the editor flushes any pending changes before dismissing and then refreshes the notes list.
+- This approach reduces request volume, avoids saving immediately on open, and makes the editor feel responsive while still minimizing data loss.
+
+#### API requests use a consistent fetch wrapper with CSRF token handling:
+- The frontend fetches `/api/auth/csrf/` to set the CSRF cookie and includes credentials (session cookie).
+- Mutating requests (e.g. login/logout/create/update) include the CSRF token in the `X-CSRFToken` header.
+
+### **Docker/dev ergonomics**
+Added idempotent startup logic to create a default superuser and run migrations.
+
+### **AI assistance**
+Cascade was used to help with:
+
+- **Project initial structure setup:** Docker configuration files and directory structure
+- **Architecture design and planning:** Braintorming design options and solutions pros and cons
+- **Documentation and testing:** Improving documentation clarity, checking test coverage and writing missing tests
+- **Debugging and troubleshooting:** Analyzing errors, identifying root causes and suggesting fixes and improvements
+- **Code review and optimization:** Reviewing code for best practices and suggesting improvements for code quality and performance
