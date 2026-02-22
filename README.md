@@ -1,13 +1,13 @@
 # J.Notes: A Note Taking Application
 
 <div>
-    <a href="https://www.loom.com/share/2d23a547bdfd4fcfbc5cafe23b55a242">
-      <p>Walkthrough Video</p>
+    <a href="https://www.loom.com/share/6393a1b6dddc46e29f27f2e68f1bd9cb">
+      <p>Walkthrough to the Note-Taking App Features - Watch Video</p>
     </a>
-    <a href="https://www.loom.com/share/2d23a547bdfd4fcfbc5cafe23b55a242">
-      <img style="max-width:300px;" src="https://cdn.loom.com/sessions/thumbnails/2d23a547bdfd4fcfbc5cafe23b55a242-342b649d23aa9a86-full-play.gif#t=0.1">
+    <a href="https://www.loom.com/share/6393a1b6dddc46e29f27f2e68f1bd9cb">
+      <img style="max-width:300px;" src="https://cdn.loom.com/sessions/thumbnails/6393a1b6dddc46e29f27f2e68f1bd9cb-9aeef17460bb60c3-full-play.gif#t=0.1">
     </a>
-</div>
+  </div>
   
 ## Stack
 
