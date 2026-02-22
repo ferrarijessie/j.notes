@@ -1,5 +1,14 @@
-# J.Notes App: A Note Taking Application
+# J.Notes: A Note Taking Application
 
+<div>
+    <a href="https://www.loom.com/share/2d23a547bdfd4fcfbc5cafe23b55a242">
+      <p>Walkthrough Video</p>
+    </a>
+    <a href="https://www.loom.com/share/2d23a547bdfd4fcfbc5cafe23b55a242">
+      <img style="max-width:300px;" src="https://cdn.loom.com/sessions/thumbnails/2d23a547bdfd4fcfbc5cafe23b55a242-342b649d23aa9a86-full-play.gif#t=0.1">
+    </a>
+</div>
+  
 ## Stack
 
 - API: Python + Django + Django REST Framework
